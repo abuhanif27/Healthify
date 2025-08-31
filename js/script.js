@@ -76,7 +76,7 @@ function buildAnalysis(symptoms, duration, age) {
   parts.push(
     `<p><em>Summary you provided${
       meta.length ? " (" + meta.join(", ") + ")" : ""
-    }:</em> ${echo || "—"}</p>`
+    }:</em> ${echo || "..."}</p>`
   );
   parts.push("<h3>General information</h3>");
   parts.push("<p>" + general.join(" ") + "</p>");
@@ -199,7 +199,7 @@ function renderFinder(location) {
         searchUrl +
         '" target="_blank" rel="noopener noreferrer">' +
         sanitize(x.name) +
-        "</a></strong> — " +
+        "</a></strong> - " +
         sanitize(x.desc) +
         '<div class="actions" style="margin-top:8px;">' +
         '<button class="btn secondary small" type="button" data-map="' +
