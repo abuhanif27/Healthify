@@ -16,9 +16,6 @@ tabs.forEach((btn) => {
 });
 
 // ---- State ----
-let lastSymptoms = "";
-let lastDuration = "";
-// Finder pagination state
 let finderItems = [];
 let finderPage = 0;
 const finderPageSize = 3;
@@ -27,10 +24,9 @@ const finderPageSize = 3;
 const sanitize = (s = "") =>
   s.replace(/[<>]/g, (ch) => ({ "<": "&lt;", ">": "&gt;" }[ch]));
 
+// Analysis builder
 function buildAnalysis(symptoms, duration, age) {
   const s = symptoms.toLowerCase();
-
-  // Keyword buckets (strictly non‑diagnostic)
   const buckets = [
     {
       keys: ["sore throat", "throat pain", "scratchy throat", "tonsil"],
@@ -61,24 +57,18 @@ function buildAnalysis(symptoms, duration, age) {
       info: "Digestive discomfort can occasionally accompany viral illnesses or dietary upsets.",
     },
   ];
-
   const general = [];
-  for (const b of buckets) {
+  for (const b of buckets)
     if (b.keys.some((k) => s.includes(k))) general.push(b.info);
-  }
-  if (general.length === 0) {
+  if (general.length === 0)
     general.push(
       "These symptoms can sometimes be associated with everyday issues like mild viral illnesses, allergies, environmental irritation, stress, or dehydration."
     );
-  }
 
   const parts = [];
-  // Mandatory disclaimer — exact phrasing, bolded
   parts.push(
     "<strong>This is not a medical diagnosis. Please consult a healthcare professional for accurate advice.</strong>"
   );
-
-  // Echo input (sanitized)
   const meta = [];
   if (duration) meta.push(`for ${sanitize(duration)}`);
   if (age) meta.push(`age ${sanitize(String(age))}`);
@@ -88,30 +78,23 @@ function buildAnalysis(symptoms, duration, age) {
       meta.length ? " (" + meta.join(", ") + ")" : ""
     }:</em> ${echo || "—"}</p>`
   );
-
-  // General information
   parts.push("<h3>General information</h3>");
   parts.push("<p>" + general.join(" ") + "</p>");
-
-  // Recommendation
   parts.push("<h3>Recommendation</h3>");
   parts.push(
     "<p>Please consider seeing a doctor for proper evaluation, especially if symptoms are severe, persistent, or worsening. Seek urgent care for red‑flag issues such as trouble breathing, severe or ongoing high fever, chest pain, stiff neck, confusion, a spreading rash, dehydration, or difficulty swallowing.</p>"
   );
-
   return parts.join("\n");
 }
 
+// Tips builder
 function buildTips(symptoms) {
   const s = symptoms.toLowerCase();
   const tips = new Set();
-
-  // Universal comfort tips (non‑medical)
   tips.add(
     "Sip water or warm fluids regularly to stay comfortable and hydrated."
   );
   tips.add("Prioritize extra rest and gentle routines to support recovery.");
-
   if (/throat|tonsil|voice/.test(s)) {
     tips.add(
       "Gargle gently with warm salt water 2–3× daily for throat comfort."
@@ -136,16 +119,14 @@ function buildTips(symptoms) {
     );
     tips.add("Avoid heavy, very spicy, or greasy meals until you feel better.");
   }
-
-  // Limit to 3–5 items
   return Array.from(tips)
     .slice(0, 5)
     .map((t) => `• ${t}`)
     .join("\n");
 }
 
+// Finder data builder
 function getFinderData(type, location) {
-  // Predefined lists for Dhaka
   const dhakaHospitals = [
     {
       name: "Evercare Hospital Dhaka",
@@ -184,14 +165,10 @@ function getFinderData(type, location) {
   ];
   const isDhaka = /dhaka/i.test(location);
   let arr;
-  if (type.startsWith("Hospital")) {
-    arr = isDhaka ? dhakaHospitals : [];
-  } else {
-    arr = isDhaka ? dhakaPharmacies : [];
-  }
-  // If outside Dhaka, return generic placeholder items (8) to demo pagination
+  if (type.startsWith("Hospital")) arr = isDhaka ? dhakaHospitals : [];
+  else arr = isDhaka ? dhakaPharmacies : [];
   if (arr.length === 0) {
-    const label = sanitize(type.slice(0, -1));
+    const label = sanitize(type.replace(/\(.+\)/, ""));
     return Array.from({ length: 8 }, (_, i) => ({
       name: `${label} ${i + 1}`,
       desc: "Short one‑sentence description.",
@@ -200,6 +177,7 @@ function getFinderData(type, location) {
   return arr;
 }
 
+// Finder render
 function renderFinder(location) {
   const start = finderPage * finderPageSize;
   const end = Math.min(start + finderPageSize, finderItems.length);
@@ -264,35 +242,30 @@ function renderFinder(location) {
   document.getElementById("finderOut").innerHTML = html;
 }
 
-// ---- Analysis form ----
+// Analysis form
 const analysisForm = document.getElementById("analysisForm");
 const analysisOut = document.getElementById("analysisOut");
 const clearAnalysisBtn = document.getElementById("clearAnalysis");
-
 analysisForm.addEventListener("submit", (e) => {
   e.preventDefault();
   const symptoms = document.getElementById("symptoms").value.trim();
   const duration = document.getElementById("duration").value.trim();
   const age = document.getElementById("age").value;
-
-  lastSymptoms = symptoms;
-  lastDuration = duration;
   analysisOut.innerHTML = buildAnalysis(symptoms, duration, age);
   analysisOut.hidden = false;
 });
-
 clearAnalysisBtn.addEventListener("click", () => {
   analysisOut.textContent = "";
   analysisOut.hidden = true;
 });
 
-// ---- Tips ----
+// Tips buttons
 const tipsBtn = document.getElementById("tipsBtn");
 const tipsOut = document.getElementById("tipsOut");
 const tipsClear = document.getElementById("tipsClear");
-
 tipsBtn.addEventListener("click", () => {
-  const src = lastSymptoms || "general discomfort";
+  const src =
+    document.getElementById("symptoms").value.trim() || "general discomfort";
   tipsOut.textContent = buildTips(src);
   tipsOut.hidden = false;
 });
@@ -301,11 +274,10 @@ tipsClear.addEventListener("click", () => {
   tipsOut.hidden = true;
 });
 
-// ---- Finder ----
+// Finder form
 const finderForm = document.getElementById("finderForm");
-const finderOut = document.getElementById("finderOut");
+const finderOutElem = document.getElementById("finderOut");
 const clearFinderBtn = document.getElementById("clearFinder");
-
 finderForm.addEventListener("submit", (e) => {
   e.preventDefault();
   const type = document.getElementById("type").value;
@@ -313,17 +285,16 @@ finderForm.addEventListener("submit", (e) => {
   finderItems = getFinderData(type, location || "");
   finderPage = 0;
   renderFinder(location || "");
-  finderOut.hidden = false;
+  finderOutElem.hidden = false;
 });
 clearFinderBtn.addEventListener("click", () => {
-  finderOut.textContent = "";
-  finderOut.hidden = true;
+  finderOutElem.textContent = "";
+  finderOutElem.hidden = true;
   finderItems = [];
 });
 
-// Pagination + Map toggle (delegated)
-finderOut.addEventListener("click", (e) => {
-  // Pagination
+// Pagination + map toggle
+finderOutElem.addEventListener("click", (e) => {
   const pageBtn = e.target.closest("button[data-page]");
   if (pageBtn) {
     const action = pageBtn.getAttribute("data-page");
@@ -342,7 +313,6 @@ finderOut.addEventListener("click", (e) => {
     }
     return;
   }
-  // Map toggle
   const mapBtn = e.target.closest("button[data-map]");
   if (mapBtn) {
     const targetId = mapBtn.getAttribute("data-target");

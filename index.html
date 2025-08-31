@@ -4,7 +4,6 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Healthify</title>
-    <!-- Better address bar color on mobile -->
     <meta
       name="theme-color"
       content="#0b1020"
@@ -33,7 +32,6 @@
               xmlns="http://www.w3.org/2000/svg"
               role="img"
               aria-hidden="true"
-              preserveAspectRatio="xMidYMid meet"
             >
               <defs>
                 <linearGradient id="g1" x1="0" x2="1" y1="0" y2="1">
@@ -106,7 +104,7 @@
     </header>
 
     <main class="wrap">
-      <!-- Analysis -->
+      <!-- Analysis Section -->
       <section id="analysis" class="tab-panel" role="tabpanel">
         <div class="grid">
           <div class="card">
@@ -162,7 +160,7 @@
         </div>
       </section>
 
-      <!-- Wellness -->
+      <!-- Wellness Section -->
       <section
         id="wellness"
         class="tab-panel"
@@ -192,7 +190,7 @@
         </div>
       </section>
 
-      <!-- Finder -->
+      <!-- Finder Section -->
       <section
         id="finder"
         class="tab-panel"
@@ -209,6 +207,7 @@
               <div class="row">
                 <div>
                   <label for="type">Type</label>
+                  <!-- back to native select with improved styling -->
                   <select id="type">
                     <option>Hospitals</option>
                     <option>Pharmacies (24/7)</option>
@@ -227,6 +226,7 @@
               </div>
             </form>
           </div>
+
           <div class="card">
             <h2>Results</h2>
             <div id="finderOut" class="output" aria-live="polite" hidden></div>

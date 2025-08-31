@@ -24,7 +24,6 @@
   color-scheme: dark;
 }
 
-/* Light mode polish */
 @media (prefers-color-scheme: light) {
   :root {
     --bg: #f7f9ff;
@@ -330,7 +329,7 @@ main {
   }
 }
 
-/* Inputs */
+/* Inputs & select */
 textarea,
 input,
 select {
@@ -339,9 +338,10 @@ select {
   border: 1px solid var(--stroke);
   color: var(--text);
   border-radius: 14px;
-  padding: 12px;
+  padding: 12px 12px;
   outline: none;
   transition: box-shadow 0.2s, border-color 0.2s;
+  -webkit-background-clip: padding-box;
 }
 textarea:focus,
 input:focus,
@@ -353,6 +353,49 @@ textarea {
   min-height: 120px;
   resize: vertical;
 }
+/* Native select arrow and dark/light drop-down improvements */
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 42px;
+  background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+    linear-gradient(135deg, var(--muted) 50%, transparent 50%),
+    radial-gradient(
+      circle at center,
+      transparent 38%,
+      var(--stroke) 39%,
+      var(--stroke) 41%,
+      transparent 42%
+    );
+  background-position: calc(100% - 18px) 50%, calc(100% - 12px) 50%,
+    calc(100% - 16px) 50%;
+  background-size: 6px 6px, 6px 6px, 18px 18px;
+  background-repeat: no-repeat;
+}
+select option {
+  background-color: var(--card);
+  color: var(--text);
+}
+select option:hover,
+select option:checked {
+  background-color: rgba(122, 162, 255, 0.18);
+  color: var(--text);
+}
+@media (prefers-color-scheme: light) {
+  select option {
+    background-color: #fff;
+    color: var(--text);
+  }
+  select option:hover,
+  select option:checked {
+    background-color: rgba(49, 92, 255, 0.12);
+    color: var(--text);
+  }
+}
+select::-ms-expand {
+  display: none;
+} /* IE fallback */
+
 label {
   display: block;
   font-size: 0.9rem;
@@ -364,7 +407,6 @@ label {
   grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
-
 .actions {
   display: flex;
   gap: 10px;
@@ -468,8 +510,9 @@ label {
   }
 }
 
-/* Pretty links (results + output) */
-a {
+/* Links */
+a,
+a:visited {
   color: var(--link);
   text-decoration: none;
 }
@@ -478,7 +521,8 @@ a:hover {
   text-decoration-thickness: 2px;
   text-underline-offset: 3px;
 }
-.result-link {
+.result-link,
+.result-link:visited {
   color: var(--link);
   font-weight: 700;
 }
