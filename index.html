@@ -4,14 +4,26 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Healthify</title>
+    <!-- Better address bar color on mobile -->
+    <meta
+      name="theme-color"
+      content="#0b1020"
+      media="(prefers-color-scheme: dark)"
+    />
+    <meta
+      name="theme-color"
+      content="#f7f9ff"
+      media="(prefers-color-scheme: light)"
+    />
+    <link rel="icon" type="image/svg+xml" href="icons/favicon.svg" />
+    <link rel="stylesheet" href="css/style.css" />
   </head>
-  <link rel="icon" type="image/svg+xml" href="icons/favicon.svg" />
-  <link rel="stylesheet" href="css/style.css" />
   <body>
     <div class="aurora" aria-hidden="true">
       <div class="blob"></div>
       <div class="blob b2"></div>
     </div>
+
     <header>
       <div class="wrap">
         <div class="brand">
@@ -21,6 +33,7 @@
               xmlns="http://www.w3.org/2000/svg"
               role="img"
               aria-hidden="true"
+              preserveAspectRatio="xMidYMid meet"
             >
               <defs>
                 <linearGradient id="g1" x1="0" x2="1" y1="0" y2="1">
@@ -62,6 +75,7 @@
             </p>
           </div>
         </div>
+
         <nav class="tabs" role="tablist" aria-label="Primary">
           <button
             class="tab-btn active"
@@ -92,6 +106,7 @@
     </header>
 
     <main class="wrap">
+      <!-- Analysis -->
       <section id="analysis" class="tab-panel" role="tabpanel">
         <div class="grid">
           <div class="card">
@@ -147,6 +162,7 @@
         </div>
       </section>
 
+      <!-- Wellness -->
       <section
         id="wellness"
         class="tab-panel"
@@ -176,6 +192,7 @@
         </div>
       </section>
 
+      <!-- Finder -->
       <section
         id="finder"
         class="tab-panel"
@@ -221,6 +238,7 @@
         </div>
       </section>
     </main>
+
     <script src="js/script.js"></script>
   </body>
 </html>

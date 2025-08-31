@@ -93,7 +93,7 @@ function buildAnalysis(symptoms, duration, age) {
   parts.push("<h3>General information</h3>");
   parts.push("<p>" + general.join(" ") + "</p>");
 
-  // Recommendation (consistent, safety‑first)
+  // Recommendation
   parts.push("<h3>Recommendation</h3>");
   parts.push(
     "<p>Please consider seeing a doctor for proper evaluation, especially if symptoms are severe, persistent, or worsening. Seek urgent care for red‑flag issues such as trouble breathing, severe or ongoing high fever, chest pain, stiff neck, confusion, a spreading rash, dehydration, or difficulty swallowing.</p>"
@@ -189,7 +189,7 @@ function getFinderData(type, location) {
   } else {
     arr = isDhaka ? dhakaPharmacies : [];
   }
-  // If outside Dhaka or empty list, return generic placeholder items (8) so pagination can demonstrate
+  // If outside Dhaka, return generic placeholder items (8) to demo pagination
   if (arr.length === 0) {
     const label = sanitize(type.slice(0, -1));
     return Array.from({ length: 8 }, (_, i) => ({
@@ -204,6 +204,7 @@ function renderFinder(location) {
   const start = finderPage * finderPageSize;
   const end = Math.min(start + finderPageSize, finderItems.length);
   const slice = finderItems.slice(start, end);
+
   let html = slice
     .map((x, idx) => {
       const globalIndex = start + idx;
@@ -213,9 +214,10 @@ function renderFinder(location) {
       const directionsUrl =
         "https://www.google.com/maps/dir/?api=1&destination=" + query;
       const targetId = "map-" + globalIndex;
+
       return (
         '<div class="list-item">' +
-        '• <strong><a href="' +
+        '• <strong><a class="result-link" href="' +
         searchUrl +
         '" target="_blank" rel="noopener noreferrer">' +
         sanitize(x.name) +
@@ -238,6 +240,7 @@ function renderFinder(location) {
       );
     })
     .join("\n");
+
   const totalPages = Math.max(
     1,
     Math.ceil(finderItems.length / finderPageSize)
@@ -307,7 +310,6 @@ finderForm.addEventListener("submit", (e) => {
   e.preventDefault();
   const type = document.getElementById("type").value;
   const location = document.getElementById("location").value.trim();
-  // Prepare finder data and reset pagination
   finderItems = getFinderData(type, location || "");
   finderPage = 0;
   renderFinder(location || "");
@@ -319,9 +321,9 @@ clearFinderBtn.addEventListener("click", () => {
   finderItems = [];
 });
 
-// Pagination and map handling for finder results
+// Pagination + Map toggle (delegated)
 finderOut.addEventListener("click", (e) => {
-  // Handle page navigation
+  // Pagination
   const pageBtn = e.target.closest("button[data-page]");
   if (pageBtn) {
     const action = pageBtn.getAttribute("data-page");
@@ -340,26 +342,24 @@ finderOut.addEventListener("click", (e) => {
     }
     return;
   }
-  // Handle map toggle
+  // Map toggle
   const mapBtn = e.target.closest("button[data-map]");
   if (mapBtn) {
     const targetId = mapBtn.getAttribute("data-target");
     const mapEl = document.getElementById(targetId);
-    if (mapEl) {
-      if (mapEl.hidden) {
-        // Populate iframe only when showing to reduce load
-        const query = mapBtn.getAttribute("data-map");
-        mapEl.innerHTML =
-          '<iframe src="https://www.google.com/maps?q=' +
-          query +
-          '&output=embed" width="100%" height="280" style="border:0;" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>';
-        mapEl.hidden = false;
-        mapBtn.textContent = "Hide map";
-      } else {
-        mapEl.hidden = true;
-        mapEl.innerHTML = "";
-        mapBtn.textContent = "Show map";
-      }
+    if (!mapEl) return;
+    if (mapEl.hidden) {
+      const query = mapBtn.getAttribute("data-map");
+      mapEl.innerHTML =
+        '<iframe src="https://www.google.com/maps?q=' +
+        query +
+        '&output=embed" width="100%" height="280" style="border:0;" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>';
+      mapEl.hidden = false;
+      mapBtn.textContent = "Hide map";
+    } else {
+      mapEl.hidden = true;
+      mapEl.innerHTML = "";
+      mapBtn.textContent = "Show map";
     }
   }
 });
